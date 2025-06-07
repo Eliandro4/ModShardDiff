@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using Serilog;
 using UndertaleModLib;
-using UndertaleModLib.Models;
-
 namespace ModShardDiff;
 internal static class MainOperations
 {
@@ -52,7 +50,7 @@ internal static class FileReader
         DirectoryInfo dir = new(outputFolder);
         if (dir.Exists) dir.Delete(true);
         dir.Create();
-        
+
         if (!File.Exists(name)) throw new FileNotFoundException($"File {name} does not exist.");
         if (!File.Exists(reference)) throw new FileNotFoundException($"File {reference} does not exist.");
 
@@ -62,7 +60,7 @@ internal static class FileReader
         await taskRef;
 
         if (taskName.Result == null || taskRef.Result == null) throw new FormatException($"Cannot load {name} and {outputFolder}.");
-        
+
         DiffUtils.DiffCodes(taskName.Result, taskRef.Result, dir);
         DiffUtils.DiffObjects(taskName.Result, taskRef.Result, dir);
         DiffUtils.DiffRooms(taskName.Result, taskRef.Result, dir);
@@ -79,7 +77,6 @@ internal static class FileReader
             data = UndertaleIO.Read(stream);
         }
 
-        UndertaleEmbeddedTexture.TexData.ClearSharedStream();
         Log.Information(string.Format("Successfully load: {0}.", filename));
 
         return data;
@@ -95,7 +92,7 @@ internal static class FileReader
                 data = LoadUmt(filename);
             }
             catch (Exception ex)
-            {   
+            {
                 Log.Error(ex, "Something went wrong");
                 throw;
             }

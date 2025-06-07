@@ -2,6 +2,9 @@ using UndertaleModLib;
 using UndertaleModLib.Models;
 using DiffMatchPatch;
 using UndertaleModLib.Decompiler;
+using Underanalyzer.Decompiler.AST;
+using Underanalyzer.Decompiler;
+using Underanalyzer.Compiler;
 using UndertaleModLib.Util;
 using Polenter.Serialization;
 using Newtonsoft.Json;
@@ -161,7 +164,8 @@ static public class DiffUtils
     }
     private static void AddedRemovedCodes(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder)
     {
-        GlobalDecompileContext contextName = new(name, false);
+        GlobalDecompileContext contextName = new(name);
+        Underanalyzer.Decompiler.IDecompileSettings decompilerSettings = name.ToolInfo.DecompilerSettings;
         DirectoryInfo dirAddedCode = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "AddedCodes"));
         dirAddedCode.Create();
 
@@ -176,7 +180,7 @@ static public class DiffUtils
                 string strCode = "";
                 try
                 {
-                    strCode = Decompiler.Decompile(code, contextName);
+                    strCode = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextName, code, decompilerSettings).DecompileToString() : "");
                     File.WriteAllText(Path.Join(dirAddedCode.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.gml"), strCode);
                 }
                 catch
@@ -192,8 +196,10 @@ static public class DiffUtils
         using MemoryStream ms = new();
         SharpSerializer burstSerializer = new(new SharpSerializerBinarySettings(BinarySerializationMode.Burst));
 
-        GlobalDecompileContext contextName = new(name, false);
-        GlobalDecompileContext contextRef = new(reference, false);
+        GlobalDecompileContext contextName = new(name);
+        GlobalDecompileContext contextRef = new(reference);
+        Underanalyzer.Decompiler.IDecompileSettings decompilerSettingsName = name.ToolInfo.DecompilerSettings;
+        Underanalyzer.Decompiler.IDecompileSettings decompilerSettingsRef = reference.ToolInfo.DecompilerSettings;
         DirectoryInfo dirModifiedCode = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "ModifiedCodes"));
         dirModifiedCode.Create();
 
@@ -210,8 +216,8 @@ static public class DiffUtils
             if (CompareUndertaleCode(ms, burstSerializer, code, codeRef)) continue;
             try
             {
-                strName = Decompiler.Decompile(code, contextName);
-                strRef = Decompiler.Decompile(codeRef, contextRef);
+                strName = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextName, code, decompilerSettingsName).DecompileToString() : "");
+                strRef = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextRef, code, decompilerSettingsName).DecompileToString() : "");
             }
             catch(Exception ex)
             {
@@ -382,7 +388,7 @@ static public class DiffUtils
             {
                 if (sprite.Textures[i]?.Texture is not null)
                 {
-                    if(UnsafeCompare(sprite.Textures[i].Texture.TexturePage.TextureData.TextureBlob, spriteRef.Textures[i].Texture.TexturePage.TextureData.TextureBlob)) continue;
+                    if(UnsafeCompare(sprite.Textures[i].Texture.TexturePage.TextureData.Image.ConvertToPng().ToSpan().ToArray(), spriteRef.Textures[i].Texture.TexturePage.TextureData.Image.ConvertToPng().ToSpan().ToArray())) continue;
                     worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(dirModifiedSprite.FullName , sprite.Name.Content + "_" + i + ".png"), null, true);
                 }
             }
