@@ -37,7 +37,7 @@ internal static class Program
         };
 
         rootCommand.SetHandler(MainOperations.MainCommand, nameOption, refOption, outputOption);
-
+        
         CommandLineBuilder commandLineBuilder = new(rootCommand);
 
         commandLineBuilder.AddMiddleware(async (context, next) =>
