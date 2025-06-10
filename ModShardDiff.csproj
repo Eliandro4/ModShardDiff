@@ -53,9 +53,6 @@
     <Reference Include="Underanalyzer">
       <HintPath>lib\Underanalyzer.dll</HintPath>
     </Reference>
-    <Reference Include="UndertaleModCli">
-      <HintPath>lib\UndertaleModCli.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
