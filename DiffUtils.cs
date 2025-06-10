@@ -384,9 +384,7 @@ static public class DiffUtils
     private static void ModifiedSprites(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder, TextureWorker worker)
     {
         DirectoryInfo dirModifiedSprite = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "ModifiedSprites"));
-        DirectoryInfo dirOriginalSprite = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "OriginalSprites"));
         dirModifiedSprite.Create();
-        dirOriginalSprite.Create();
 
         IEnumerable<UndertaleSprite> common = name.Sprites.Intersect(reference.Sprites, new UndertaleSpriteNameComparer());
         int minCount = 0;
@@ -402,7 +400,6 @@ static public class DiffUtils
                     if (ImageCompare(sprite.Textures[i].Texture.TexturePage.TextureData.Image.GetMagickImage(), spriteRef.Textures[i].Texture.TexturePage.TextureData.Image.GetMagickImage())) continue;
                     {
                         worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(dirModifiedSprite.FullName, sprite.Name.Content + "_" + i + ".png"), null, true);
-                        worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(dirOriginalSprite.FullName, sprite.Name.Content + "_" + i + ".png"), null, true);
                     }
                 }
             }
