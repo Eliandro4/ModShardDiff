@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Serilog;
 using UndertaleModLib;
+using ImageMagick;
 namespace ModShardDiff;
 internal static class MainOperations
 {

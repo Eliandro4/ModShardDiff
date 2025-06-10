@@ -8,6 +8,8 @@ using Underanalyzer.Compiler;
 using UndertaleModLib.Util;
 using Polenter.Serialization;
 using Newtonsoft.Json;
+using ImageMagick;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ModShardDiff;
 
@@ -145,6 +147,13 @@ static public class DiffUtils
             if ((len & 1) != 0 && *x1 != *x2) return false;
             return true;
         }
+    }
+    public static bool ImageCompare(MagickImage a1, MagickImage a2)
+    {
+        if (a1 == a2) {return false; }
+        using var diff = new MagickImage();
+        var resultado = a1.Compare(a2, ErrorMetric.Absolute);
+        return (resultado != 0);
     }
     private static bool CompareUndertaleCode(MemoryStream ms, SharpSerializer burstSerializer, UndertaleCode code, UndertaleCode codeRef)
     {
@@ -375,7 +384,9 @@ static public class DiffUtils
     private static void ModifiedSprites(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder, TextureWorker worker)
     {
         DirectoryInfo dirModifiedSprite = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "ModifiedSprites"));
+        DirectoryInfo dirOriginalSprite = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "OriginalSprites"));
         dirModifiedSprite.Create();
+        dirOriginalSprite.Create();
 
         IEnumerable<UndertaleSprite> common = name.Sprites.Intersect(reference.Sprites, new UndertaleSpriteNameComparer());
         int minCount = 0;
@@ -388,8 +399,11 @@ static public class DiffUtils
             {
                 if (sprite.Textures[i]?.Texture is not null)
                 {
-                    if(UnsafeCompare(sprite.Textures[i].Texture.TexturePage.TextureData.Image.ConvertToPng().ToSpan().ToArray(), spriteRef.Textures[i].Texture.TexturePage.TextureData.Image.ConvertToPng().ToSpan().ToArray())) continue;
-                    worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(dirModifiedSprite.FullName , sprite.Name.Content + "_" + i + ".png"), null, true);
+                    if (ImageCompare(sprite.Textures[i].Texture.TexturePage.TextureData.Image.GetMagickImage(), spriteRef.Textures[i].Texture.TexturePage.TextureData.Image.GetMagickImage())) continue;
+                    {
+                        worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(dirModifiedSprite.FullName, sprite.Name.Content + "_" + i + ".png"), null, true);
+                        worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(dirOriginalSprite.FullName, sprite.Name.Content + "_" + i + ".png"), null, true);
+                    }
                 }
             }
 
