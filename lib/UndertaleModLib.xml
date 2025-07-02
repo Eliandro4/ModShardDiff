@@ -5519,6 +5519,97 @@
         <member name="M:UndertaleModLib.Models.UndertaleScript.Dispose">
             <inheritdoc/>
         </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.PlaybackType">
+            <summary>
+            Possible playback modes for sequences.
+            </summary>
+        </member>
+        <member name="F:UndertaleModLib.Models.UndertaleSequence.PlaybackType.Oneshot">
+            <summary>
+            Sequence plays one time and stops.
+            </summary>
+        </member>
+        <member name="F:UndertaleModLib.Models.UndertaleSequence.PlaybackType.Loop">
+            <summary>
+            Sequence loops to the beginning.
+            </summary>
+        </member>
+        <member name="F:UndertaleModLib.Models.UndertaleSequence.PlaybackType.Pingpong">
+            <summary>
+            Upon reaching either end, the sequence reverses direction.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Playback">
+            <summary>
+            Playback mode of the sequence.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.PlaybackSpeed">
+            <summary>
+            Playback speed of the sequence, in the unit specified by <see cref="P:UndertaleModLib.Models.UndertaleSequence.PlaybackSpeedType"/>.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.PlaybackSpeedType">
+            <summary>
+            Unit used for <see cref="P:UndertaleModLib.Models.UndertaleSequence.PlaybackSpeed"/>.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Length">
+            <summary>
+            Length (duration) of the sequence.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.OriginX">
+            <summary>
+            X origin of the sequence.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.OriginY">
+            <summary>
+            Y origin of the sequence.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Volume">
+            <summary>
+            Volume for audio in the sequence.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Width">
+            <summary>
+            Width of the sequence, used in GameMaker 2024.13 and above.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Height">
+            <summary>
+            Height of the sequence, used in GameMaker 2024.13 and above.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.BroadcastMessages">
+            <summary>
+            List of broadcast message keyframes in the sequence.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Moments">
+            <summary>
+            List of moment keyframes in the sequence.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Tracks">
+            <summary>
+            List of root-level tracks in the sequence.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.FunctionIDs">
+            <summary>
+            List of function IDs contained in the sequence.
+            </summary>
+        </member>
+        <member name="E:UndertaleModLib.Models.UndertaleSequence.PropertyChanged">
+            <inheritdoc />
+        </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
         </member>
@@ -5534,6 +5625,67 @@
         <member name="M:UndertaleModLib.Models.UndertaleSequence.Dispose">
             <inheritdoc/>
         </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.Keyframe`1">
+            <summary>
+            A keyframe of data stored within a sequence track, at a given time/duration, and for some number of channels.
+            </summary>
+            <typeparam name="T">Type of data this keyframe will hold.</typeparam>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.Key">
+            <summary>
+            Start time of the keyframe.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.Length">
+            <summary>
+            Duration of the keyframe.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.Stretch">
+            <summary>
+            Whether the keyframe has "stretch" enabled. (TODO: unsure what this means.)
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.Disabled">
+            <summary>
+            Whether the keyframe is disabled.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.Channels">
+            <summary>
+            Channels of the keyframe, containing actual values.
+            </summary>
+            <remarks>
+            Usually, there's 1 channel for 1D properties (such as image index/speed), and 2 channels for 2D properties (position, scale), etc.
+            </remarks>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.KeyframeChannel">
+            <summary>
+            A channel for a keyframe, containing the channel number and the value for that channel.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.KeyframeChannel.Channel">
+            <summary>
+            Channel ID to use. Generally starts at 0, and increments per each channel.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.KeyframeChannel.Value">
+            <summary>
+            Value of the keyframe for this channel.
+            </summary>
+        </member>
+        <member name="E:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.KeyframeChannel.PropertyChanged">
+            <inheritdoc />
+        </member>
+        <member name="M:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.KeyframeChannel.Serialize(UndertaleModLib.UndertaleWriter)">
+            <inheritdoc />
+        </member>
+        <member name="M:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.KeyframeChannel.Unserialize(UndertaleModLib.UndertaleReader)">
+            <inheritdoc />
+        </member>
+        <member name="E:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.PropertyChanged">
+            <inheritdoc />
+        </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
         </member>
@@ -5542,6 +5694,16 @@
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.Keyframe`1.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
             <inheritdoc cref="M:UndertaleModLib.UndertaleObject.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)"/>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.BroadcastMessage">
+            <summary>
+            Broadcast message keyframe data, as used in a sequence.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.BroadcastMessage.Messages">
+            <summary>
+            List of messages being broadcasted by this keyframe.
+            </summary>
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.BroadcastMessage.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
@@ -5552,6 +5714,16 @@
         <member name="M:UndertaleModLib.Models.UndertaleSequence.BroadcastMessage.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
             <inheritdoc cref="M:UndertaleModLib.UndertaleObject.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)"/>
         </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.Moment">
+            <summary>
+            Moment keyframe data, as used in a sequence.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Moment.Events">
+            <summary>
+            List of events being triggered by this keyframe.
+            </summary>
+        </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.Moment.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
         </member>
@@ -5560,6 +5732,71 @@
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.Moment.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
             <inheritdoc cref="M:UndertaleModLib.UndertaleObject.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)"/>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.Track">
+            <summary>
+            A track in a sequence, potentially containing keyframes or sub-tracks.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.Track.TrackBuiltinName">
+            <summary>
+            Some known builtin track names.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.Track.TrackTraits">
+            <summary>
+            Some known track traits.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Track.ModelName">
+            <summary>
+            Name for the type/model of track, such as "GMGroupTrack", "GMInstanceTrack", "GMRealTrack", etc.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Track.Name">
+            <summary>
+            Name of the track. Can be user-assigned or the name of a property or asset.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Track.BuiltinName">
+            <summary>
+            Builtin name for the track, representing the type of property, or 0 if not applicable.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Track.Traits">
+            <summary>
+            Traits for the track.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Track.IsCreationTrack">
+            <summary>
+            Whether the track is a creation track.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Track.Tags">
+            <summary>
+            Tags for the track.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Track.Tracks">
+            <summary>
+            List of sub-tracks of this track.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Track.Keyframes">
+            <summary>
+            Keyframe store of this track, or <see langword="null"/> if none is used.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.Track.OwnedResources">
+            <summary>
+            Owned resources of this track (such as animation curves).
+            </summary>
+        </member>
+        <member name="F:UndertaleModLib.Models.UndertaleSequence.Track._gmAnimCurveString">
+            <summary>
+            String used for owned animation curve resources.
+            </summary>
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.Track.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
@@ -5574,7 +5811,20 @@
             <inheritdoc/>
         </member>
         <member name="T:UndertaleModLib.Models.UndertaleSequence.ITrackKeyframes">
-            Here begins all of the keyframe data classes. Some generics used to shorten sections, but some verbosity maintained
+            <summary>
+            Base interface used for track keyframes.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.TrackKeyframes`1">
+            <summary>
+            Base implementation of track keyframes, containing a simple list of keyframes.
+            </summary>
+            <typeparam name="T">Type used for keyframe data.</typeparam>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.TrackKeyframes`1.List">
+            <summary>
+            List of keyframes in the track.
+            </summary>
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.TrackKeyframes`1.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
@@ -5585,23 +5835,60 @@
         <member name="M:UndertaleModLib.Models.UndertaleSequence.TrackKeyframes`1.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
             <inheritdoc cref="M:UndertaleModLib.UndertaleObject.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)"/>
         </member>
-        <member name="M:UndertaleModLib.Models.UndertaleSequence.ResourceData`1.Serialize(UndertaleModLib.UndertaleWriter)">
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.ResourceData`2">
+            <summary>
+            Keyframe data implementation for a resource ID reference.
+            </summary>
+            <typeparam name="T">Type of the resource being referenced.</typeparam>
+            <typeparam name="ChunkT">Type of the chunk for the resource being referenced.</typeparam>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.ResourceData`2.Resource">
+            <summary>
+            Resource ID reference.
+            </summary>
+        </member>
+        <member name="M:UndertaleModLib.Models.UndertaleSequence.ResourceData`2.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
         </member>
-        <member name="M:UndertaleModLib.Models.UndertaleSequence.ResourceData`1.Unserialize(UndertaleModLib.UndertaleReader)">
+        <member name="M:UndertaleModLib.Models.UndertaleSequence.ResourceData`2.Unserialize(UndertaleModLib.UndertaleReader)">
             <inheritdoc />
         </member>
-        <member name="M:UndertaleModLib.Models.UndertaleSequence.ResourceData`1.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
+        <member name="M:UndertaleModLib.Models.UndertaleSequence.ResourceData`2.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
             <inheritdoc cref="M:UndertaleModLib.UndertaleObject.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)"/>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.SimpleIntData">
+            <summary>
+            Keyframe data implementation for a simple 32-bit integer.
+            </summary>
         </member>
         <member name="F:UndertaleModLib.Models.UndertaleSequence.SimpleIntData.ChildObjectsSize">
             <inheritdoc cref="F:UndertaleModLib.IStaticChildObjectsSize.ChildObjectsSize" />
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.SimpleIntData.Value">
+            <summary>
+            Value of the 32-bit integer.
+            </summary>
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.SimpleIntData.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.SimpleIntData.Unserialize(UndertaleModLib.UndertaleReader)">
             <inheritdoc />
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.AudioKeyframes">
+            <summary>
+            Keyframe store for audio keyframes.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.AudioKeyframes.Data">
+            <summary>
+            Audio keyframe data, referencing sound assets.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.AudioKeyframes.Data.Mode">
+            <summary>
+            Mode for the audio keyframe.
+            </summary>
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.AudioKeyframes.Data.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
@@ -5612,14 +5899,99 @@
         <member name="M:UndertaleModLib.Models.UndertaleSequence.AudioKeyframes.Data.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
             <inheritdoc cref="M:UndertaleModLib.UndertaleObject.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)"/>
         </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.InstanceKeyframes">
+            <summary>
+            Keyframe store for instance keyframes.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.InstanceKeyframes.Data">
+            <summary>
+            Instance keyframe data, referencing game object assets.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.GraphicKeyframes">
+            <summary>
+            Keyframe store for graphic keyframes.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.GraphicKeyframes.Data">
+            <summary>
+            Graphic keyframe data, referencing sprite assets.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.SequenceKeyframes">
+            <summary>
+            Keyframe store for sequence keyframes (sub-sequences).
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.SequenceKeyframes.Data">
+            <summary>
+            Sequence keyframe data, referencing sequence assets.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.SpriteFramesKeyframes">
+            <summary>
+            Keyframe store for sprite frame keyframes.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.SpriteFramesKeyframes.Data">
+            <summary>
+            Sprite frame keyframe data, which are simple frame indices.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.BoolKeyframes">
+            <summary>
+            Keyframe store for boolean keyframes.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.BoolKeyframes.Data">
+            <summary>
+            Boolean keyframe data, which are simple integers.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.StringKeyframes">
+            <summary>
+            Keyframe store for string keyframes.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.StringKeyframes.Data">
+            <summary>
+            String keyframe data, which are just string references.
+            </summary>
+        </member>
         <member name="F:UndertaleModLib.Models.UndertaleSequence.StringKeyframes.Data.ChildObjectsSize">
             <inheritdoc cref="F:UndertaleModLib.IStaticChildObjectsSize.ChildObjectsSize" />
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.StringKeyframes.Data.Value">
+            <summary>
+            String reference for the keyframe.
+            </summary>
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.StringKeyframes.Data.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.StringKeyframes.Data.Unserialize(UndertaleModLib.UndertaleReader)">
             <inheritdoc />
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.CurveData">
+            <summary>
+            Base implementation for keyframe data that can use animation curves.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.CurveData.IsCurveEmbedded">
+            <summary>
+            Whether the referenced curve (if applicable) is an embeddded curve, using <see cref="P:UndertaleModLib.Models.UndertaleSequence.CurveData.EmbeddedAnimCurve"/>.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.CurveData.EmbeddedAnimCurve">
+            <summary>
+            If <see cref="P:UndertaleModLib.Models.UndertaleSequence.CurveData.IsCurveEmbedded"/> is <see langword="true"/>, this represents the embedded animation curve.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.CurveData.AssetAnimCurve">
+            <summary>
+            If <see cref="P:UndertaleModLib.Models.UndertaleSequence.CurveData.IsCurveEmbedded"/> is <see langword="false"/>, this is a reference to an external animation curve asset.
+            </summary>
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.CurveData.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
@@ -5630,6 +6002,16 @@
         <member name="M:UndertaleModLib.Models.UndertaleSequence.CurveData.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
             <inheritdoc cref="M:UndertaleModLib.UndertaleObject.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)"/>
         </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.IntData">
+            <summary>
+            Keyframe data for a 32-bit integer that can be associated with an animation curve.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.IntData.Value">
+            <summary>
+            32-bit integer value.
+            </summary>
+        </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.IntData.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
         </member>
@@ -5638,6 +6020,16 @@
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.IntData.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
             <inheritdoc cref="M:UndertaleModLib.UndertaleObject.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)"/>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.IntKeyframes">
+            <summary>
+            Keyframe store for integer keyframes that can be associated with an animation curve.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.IntKeyframes.Interpolation">
+            <summary>
+            Interpolation mode; 0 is for no interpolation, 1 is for linear interpolation.
+            </summary>
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.IntKeyframes.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
@@ -5648,6 +6040,16 @@
         <member name="M:UndertaleModLib.Models.UndertaleSequence.IntKeyframes.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
             <inheritdoc cref="M:UndertaleModLib.UndertaleObject.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)"/>
         </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.RealData">
+            <summary>
+            Keyframe data for a 32-bit float that can be associated with an animation curve.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.RealData.Value">
+            <summary>
+            32-bit float value.
+            </summary>
+        </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.RealData.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
         </member>
@@ -5656,6 +6058,16 @@
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.RealData.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
             <inheritdoc cref="M:UndertaleModLib.UndertaleObject.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)"/>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.RealKeyframes">
+            <summary>
+            Keyframe store for float keyframes that can be associated with an animation curve.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.RealKeyframes.Interpolation">
+            <summary>
+            Interpolation mode; 0 is for no interpolation, 1 is for linear interpolation.
+            </summary>
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.RealKeyframes.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
@@ -5666,14 +6078,80 @@
         <member name="M:UndertaleModLib.Models.UndertaleSequence.RealKeyframes.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)">
             <inheritdoc cref="M:UndertaleModLib.UndertaleObject.UnserializeChildObjectCount(UndertaleModLib.UndertaleReader)"/>
         </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.TextKeyframes">
+            <summary>
+            Keyframe store for text keyframes.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.TextKeyframes.Data">
+            <summary>
+            Text keyframe data, containing various text display properties.
+            </summary>
+        </member>
         <member name="F:UndertaleModLib.Models.UndertaleSequence.TextKeyframes.Data.ChildObjectsSize">
             <inheritdoc cref="F:UndertaleModLib.IStaticChildObjectsSize.ChildObjectsSize" />
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.TextKeyframes.Data.Text">
+            <summary>
+            Text to be displayed.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.TextKeyframes.Data.Wrap">
+            <summary>
+            Whether line wrapping is enabled.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.TextKeyframes.Data.AlignmentV">
+            <summary>
+            Vertical alignment.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.TextKeyframes.Data.AlignmentH">
+            <summary>
+            Horizontal alignment.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.TextKeyframes.Data.FontIndex">
+            <summary>
+            Font asset index.
+            </summary>
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.TextKeyframes.Data.Serialize(UndertaleModLib.UndertaleWriter)">
             <inheritdoc />
         </member>
         <member name="M:UndertaleModLib.Models.UndertaleSequence.TextKeyframes.Data.Unserialize(UndertaleModLib.UndertaleReader)">
             <inheritdoc />
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.ParticleKeyframes">
+            <summary>
+            Keyframe store for particle system keyframes.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.ParticleKeyframes.Data">
+            <summary>
+            Particle system keyframe data, referencing particle system assets.
+            </summary>
+        </member>
+        <member name="T:UndertaleModLib.Models.UndertaleSequence.FunctionIDEntry">
+            <summary>
+            A function ID entry as used in <see cref="P:UndertaleModLib.Models.UndertaleSequence.FunctionIDs"/>.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.FunctionIDEntry.ID">
+            <summary>
+            ID of the function entry.
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Models.UndertaleSequence.FunctionIDEntry.FunctionName">
+            <summary>
+            Name of the function.
+            </summary>
+        </member>
+        <member name="M:UndertaleModLib.Models.UndertaleSequence.FunctionIDEntry.Serialize(UndertaleModLib.UndertaleWriter)">
+            <inheritdoc/>
+        </member>
+        <member name="M:UndertaleModLib.Models.UndertaleSequence.FunctionIDEntry.Unserialize(UndertaleModLib.UndertaleReader)">
+            <inheritdoc/>
         </member>
         <member name="T:UndertaleModLib.Models.UndertaleShader">
             <summary>
