@@ -5,12 +5,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <NeutralLanguage>en</NeutralLanguage>
-    <ResourceLanguages>en</ResourceLanguages>
-    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <!-- Suppress all missing XML comment warnings -->
-    <NoWarn>1591</NoWarn>
     <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
 
@@ -42,8 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="lib\**\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="lib/GameSpecificData/**/*" Link="GameSpecificData\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"  />
   </ItemGroup>
 </Project>
