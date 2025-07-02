@@ -121,42 +121,17 @@ static public class DiffUtils
         }
     }
     // thanks to Pong to acknowledge me that possibility
-    private static unsafe bool UnsafeCompare(byte[] a1, byte[] a2)
+    public static bool UnsafeCompare(byte[] a1, byte[] a2)
     {
-        if (a1 == null || a2 == null || a1.Length != a2.Length) return false;
-        fixed (byte* p1 = a1, p2 = a2)
+        if (a1 == null || a2 == null || a1.Length != a2.Length)
+            return false;
+
+        int result = 0;
+        for (int i = 0; i < a1.Length; i++)
         {
-            byte* x1 = p1, x2 = p2;
-            int len = a1.Length;
-            for (int i = 0; i < len / 8; i++, x1 += 8, x2 += 8)
-            {
-                if (*(long*) x1 != *(long*) x2) return false; // classic type casting in C, testing 8 bits by 8 bits
-            }
-            if ((len & 4) != 0) // testing last 4 bits
-            {
-                if (*(int*) x1 != *(int*) x2) return false;
-                x1 += 4;
-                x2 += 4;
-            }
-            if ((len & 2) != 0) // 2 bits
-            {
-                if (*(short*) x1 != *(short*) x2) return false;
-                x1 += 2;
-                x2 += 2;
-            }
-            if ((len & 1) != 0 && *x1 != *x2) return false;
-            return true;
+            result |= a1[i] ^ a2[i];
         }
-    }
-    public static bool ImageCompare(IMagickImage<byte> a1, IMagickImage<byte> a2)
-    {
-        /*
-        if (a1 == a2) {return false; }
-        using var diff = new MagickImage();
-        var resultado = a1.Compare(a2, ErrorMetric.Absolute);
-        return (resultado != 0);
-        */
-        return UnsafeCompare(a1.ToByteArray(), a2.ToByteArray());
+        return result == 0;
     }
     private static bool CompareUndertaleCode(MemoryStream ms, SharpSerializer burstSerializer, UndertaleCode code, UndertaleCode codeRef)
     {
@@ -406,7 +381,7 @@ static public class DiffUtils
             {
                 if (sprite.Textures[i]?.Texture is not null)
                 {
-                    if (ImageCompare(worker.GetTextureFor(sprite.Textures[i].Texture, sprite.Textures[i].Texture.Name.Content), worker.GetTextureFor(spriteRef.Textures[i].Texture, spriteRef.Textures[i].Texture.Name.Content))) continue;
+                    if (UnsafeCompare(worker.GetTextureFor(sprite.Textures[i].Texture, sprite.Textures[i].Texture.Name.Content).ToByteArray(), (worker.GetTextureFor(spriteRef.Textures[i].Texture, spriteRef.Textures[i].Texture.Name.Content)).ToByteArray())) continue;
                     {
                         worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(dirModifiedSprite.FullName, sprite.Name.Content + "_" + i + ".png"), null, true);
                     }
