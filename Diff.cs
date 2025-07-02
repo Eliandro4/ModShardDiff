@@ -34,7 +34,7 @@ internal static class MainOperations
             stopWatch.Stop();
             TimeSpan ts = stopWatch.Elapsed;
             string elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-            Console.WriteLine($"Process failed successfully in {elapsedTime}.");
+            Console.WriteLine($"Process completed successfully in {elapsedTime}.");
         }
         else
         {
