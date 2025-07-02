@@ -148,12 +148,15 @@ static public class DiffUtils
             return true;
         }
     }
-    public static bool ImageCompare(MagickImage a1, MagickImage a2)
+    public static bool ImageCompare(IMagickImage<byte> a1, IMagickImage<byte> a2)
     {
+        /*
         if (a1 == a2) {return false; }
         using var diff = new MagickImage();
         var resultado = a1.Compare(a2, ErrorMetric.Absolute);
         return (resultado != 0);
+        */
+        return UnsafeCompare(a1.ToByteArray(), a2.ToByteArray());
     }
     private static bool CompareUndertaleCode(MemoryStream ms, SharpSerializer burstSerializer, UndertaleCode code, UndertaleCode codeRef)
     {
@@ -403,7 +406,7 @@ static public class DiffUtils
             {
                 if (sprite.Textures[i]?.Texture is not null)
                 {
-                    if (ImageCompare(sprite.Textures[i].Texture.TexturePage.TextureData.Image.GetMagickImage(), spriteRef.Textures[i].Texture.TexturePage.TextureData.Image.GetMagickImage())) continue;
+                    if (ImageCompare(worker.GetTextureFor(sprite.Textures[i].Texture, sprite.Textures[i].Texture.Name.Content), worker.GetTextureFor(spriteRef.Textures[i].Texture, spriteRef.Textures[i].Texture.Name.Content))) continue;
                     {
                         worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(dirModifiedSprite.FullName, sprite.Name.Content + "_" + i + ".png"), null, true);
                     }
