@@ -49,7 +49,6 @@ namespace DiffMatchPatch {
     DELETE, INSERT, EQUAL
   }
 
-
   /**
    * Class representing one diff operation.
    */
@@ -114,7 +113,6 @@ namespace DiffMatchPatch {
       return text.GetHashCode() ^ operation.GetHashCode();
     }
   }
-
 
   /**
    * Class representing one patch operation.

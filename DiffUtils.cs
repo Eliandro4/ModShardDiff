@@ -50,13 +50,13 @@ class UndertaleGameObjectComparer : IEqualityComparer<UndertaleGameObject>
     public bool Equals(UndertaleGameObject? x, UndertaleGameObject? y)
     {
         if (x == null || y == null) return false;
-        return x.Name.Content == y.Name.Content && 
+        return x.Name.Content == y.Name.Content &&
             (x.Sprite?.Name.Content ?? "") == (y.Sprite?.Name.Content ?? "") &&
             (x.ParentId?.Name.Content ?? "") == (y.ParentId?.Name.Content ?? "") &&
             x.Visible == y.Visible &&
             x.Persistent == y.Persistent &&
             x.Awake == y.Awake &&
-            x.CollisionShape == y.CollisionShape && 
+            x.CollisionShape == y.CollisionShape &&
             x.Events.Enumerate().SelectMany(x => x.Item2.Select(y => (((EventType)x.Item1).ToString(), (int)y.EventSubtype))).ToList().Count == y.Events.Enumerate().SelectMany(x => x.Item2.Select(y => (((EventType)x.Item1).ToString(), (int)y.EventSubtype))).ToList().Count;
     }
 
@@ -67,8 +67,8 @@ class UndertaleGameObjectComparer : IEqualityComparer<UndertaleGameObject>
     {
         //Check whether the object is null
         if (x == null) return 0;
-        return x.Name.Content.GetHashCode() ^ 
-            (x.Sprite?.Name.Content ?? "").GetHashCode() ^ 
+        return x.Name.Content.GetHashCode() ^
+            (x.Sprite?.Name.Content ?? "").GetHashCode() ^
             (x.ParentId?.Name.Content ?? "").GetHashCode() ^
             x.Visible.GetHashCode() ^
             x.Persistent.GetHashCode() ^
@@ -109,7 +109,7 @@ public class GameObjectSummary
 
 static public class DiffUtils
 {
-    public static IEnumerable<(int, T)> Enumerate<T>(this IEnumerable<T> ienumerable) 
+    public static IEnumerable<(int, T)> Enumerate<T>(this IEnumerable<T> ienumerable)
     {
         int ind = 0;
         foreach(T element in ienumerable) {
@@ -135,7 +135,7 @@ static public class DiffUtils
         burstSerializer.Serialize(code, ms);
         byte[] bytes = ms.ToArray();
         ms.SetLength(0);
-        
+
         burstSerializer.Serialize(codeRef, ms);
         byte[] bytesRef = ms.ToArray();
         return UnsafeCompare(bytes, bytesRef);
@@ -155,7 +155,7 @@ static public class DiffUtils
         IEnumerable<UndertaleCode> added = name.Code.Except(reference.Code, new UndertaleCodeNameComparer());
         IEnumerable<UndertaleCode> removed = reference.Code.Except(name.Code, new UndertaleCodeNameComparer());
 
-        using (StreamWriter sw = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), $"addedCodes.txt")))
+        using (StreamWriter sw = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "addedCodes.txt")))
         {
             foreach(UndertaleCode code in added)
             {
@@ -167,12 +167,12 @@ static public class DiffUtils
                     File.WriteAllText(Path.Join(dirAddedCode.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.gml"), strCode);
                 }
                 catch
-                { 
+                {
                     // pass if failed
                 }
             }
         }
-        File.WriteAllLines(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), $"removedCodes.txt"), removed.Select(x => x.Name.Content));
+        File.WriteAllLines(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "removedCodes.txt"), removed.Select(x => x.Name.Content));
     }
     private static void ModifiedCodes(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder)
     {
@@ -217,7 +217,7 @@ static public class DiffUtils
                     }
                     catch (Exception ex2)
                     {
-                        Console.WriteLine($@"{ex2.GetType()}: {ex2.Message}");
+                        Console.WriteLine($"{ex2.GetType()}: {ex2.Message}");
                     }
                 }
             }
@@ -242,7 +242,7 @@ static public class DiffUtils
 
         IEnumerable<UndertaleGameObject> added = name.GameObjects.Except(reference.GameObjects, new UndertaleGameObjectNameComparer());
         IEnumerable<UndertaleGameObject> removed = reference.GameObjects.Except(name.GameObjects, new UndertaleGameObjectNameComparer());
-        using (StreamWriter sw = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), $"addedGameObjects.txt")))
+        using (StreamWriter sw = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "addedGameObjects.txt")))
         {
             foreach(UndertaleGameObject ob in added)
             {
@@ -259,12 +259,12 @@ static public class DiffUtils
                     Events = ob.Events.Enumerate().SelectMany(x => x.Item2.Select(y => (((EventType)x.Item1).ToString(), (int)y.EventSubtype))).ToList(),
                 };
 
-                File.WriteAllText(Path.Join(dirAddedObject.FullName, Path.DirectorySeparatorChar.ToString(), $"{ob.Name.Content}.json"), 
+                File.WriteAllText(Path.Join(dirAddedObject.FullName, Path.DirectorySeparatorChar.ToString(), $"{ob.Name.Content}.json"),
                     JsonConvert.SerializeObject(gameObjectSummary)
                 );
             }
         }
-        File.WriteAllLines(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), $"removedGameObjects.txt"), removed.Select(x => x.Name.Content));
+        File.WriteAllLines(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "removedGameObjects.txt"), removed.Select(x => x.Name.Content));
     }
     private static void ModifiedObjects(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder)
     {
@@ -339,12 +339,12 @@ static public class DiffUtils
     private static void AddedRemovedSprites(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder, TextureWorker worker)
     {
         DirectoryInfo dirAddedSprite = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "AddedSprites"));
-        dirAddedSprite.Create(); 
+        dirAddedSprite.Create();
 
         IEnumerable<UndertaleSprite> added = name.Sprites.Except(reference.Sprites, new UndertaleSpriteNameComparer());
         IEnumerable<UndertaleSprite> removed = reference.Sprites.Except(name.Sprites, new UndertaleSpriteNameComparer());
-        using StreamWriter swOrigin = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), $"addedSpritesOrigin.txt"));
-        using (StreamWriter sw = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), $"addedSprites.txt")))
+        using StreamWriter swOrigin = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "addedSpritesOrigin.txt"));
+        using (StreamWriter sw = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "addedSprites.txt")))
         {
             foreach(UndertaleSprite sprite in added)
             {
@@ -359,13 +359,13 @@ static public class DiffUtils
                 swOrigin.WriteLine($"Msl.GetSprite(\"{sprite.Name.Content}\").OriginX = {sprite.OriginX};\nMsl.GetSprite(\"{sprite.Name.Content}\").OriginY = {sprite.OriginY};");
             }
         }
-        File.WriteAllLines(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), $"removedSprites.txt"), removed.Select(x => x.Name.Content));
+        File.WriteAllLines(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "removedSprites.txt"), removed.Select(x => x.Name.Content));
     }
     private static void ModifiedSprites(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder, TextureWorker worker)
     {
         DirectoryInfo dirModifiedSprite = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "ModifiedSprites"));
         DirectoryInfo NewFrames = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "AddedFrames"));
-        DirectoryInfo OriginalFrames = new(Path.Join(ModifiedSprites.FullName, Path.DirectorySeparatorChar.ToString(), "OriginalSprites"));
+        DirectoryInfo OriginalFrames = new(Path.Join(dirModifiedSprite.FullName, Path.DirectorySeparatorChar.ToString(), "OriginalSprites"));
         dirModifiedSprite.Create();
         NewFrames.Create();
         OriginalFrames.Create();
@@ -401,7 +401,6 @@ static public class DiffUtils
     public static void DiffSprites(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder)
     {
         TextureWorker worker = new();
-        
         AddedRemovedSprites(name, reference, outputFolder, worker);
         ModifiedSprites(name, reference, outputFolder, worker);
     }
