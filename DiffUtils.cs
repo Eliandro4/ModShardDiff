@@ -2,14 +2,10 @@ using UndertaleModLib;
 using UndertaleModLib.Models;
 using DiffMatchPatch;
 using UndertaleModLib.Decompiler;
-using Underanalyzer.Decompiler.AST;
-using Underanalyzer.Decompiler;
-using Underanalyzer.Compiler;
 using UndertaleModLib.Util;
 using Polenter.Serialization;
 using Newtonsoft.Json;
 using ImageMagick;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ModShardDiff;
 
@@ -198,7 +194,7 @@ static public class DiffUtils
         string strRef = "";
         UndertaleCode codeRef;
 
-        IEnumerable<UndertaleCode> common = name.Code.Intersect(reference.Code, new UndertaleCodeNameComparer());
+        IEnumerable<UndertaleCode> common = name.Code.Where(c => c.ParentEntry is null).ToList().Intersect(reference.Code.Where(c => c.ParentEntry is null).ToList(), new UndertaleCodeNameComparer());
         diff_match_patch dmp = new();
 
         foreach(UndertaleCode code in common)
@@ -208,7 +204,7 @@ static public class DiffUtils
             try
             {
                 strName = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextName, code, decompilerSettingsName).DecompileToString() : "");
-                strRef = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextRef, code, decompilerSettingsName).DecompileToString() : "");
+                strRef = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextRef, codeRef, decompilerSettingsRef).DecompileToString() : "");
             }
             catch(Exception ex)
             {
