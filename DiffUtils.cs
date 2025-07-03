@@ -364,7 +364,11 @@ static public class DiffUtils
     private static void ModifiedSprites(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder, TextureWorker worker)
     {
         DirectoryInfo dirModifiedSprite = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "ModifiedSprites"));
+        DirectoryInfo NewFrames = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "AddedFrames"));
+        DirectoryInfo OriginalFrames = new(Path.Join(ModifiedSprites.FullName, Path.DirectorySeparatorChar.ToString(), "OriginalSprites"));
         dirModifiedSprite.Create();
+        NewFrames.Create();
+        OriginalFrames.Create();
 
         IEnumerable<UndertaleSprite> common = name.Sprites.Intersect(reference.Sprites, new UndertaleSpriteNameComparer());
         int minCount = 0;
@@ -380,6 +384,7 @@ static public class DiffUtils
                     if (UnsafeCompare(worker.GetTextureFor(sprite.Textures[i].Texture, sprite.Textures[i].Texture.Name.Content).ToByteArray(), (worker.GetTextureFor(spriteRef.Textures[i].Texture, spriteRef.Textures[i].Texture.Name.Content)).ToByteArray())) continue;
                     {
                         worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(dirModifiedSprite.FullName, sprite.Name.Content + "_" + i + ".png"), null, true);
+                        worker.ExportAsPNG(spriteRef.Textures[i].Texture, Path.Combine(OriginalFrames.FullName, sprite.Name.Content + "_" + i + ".png"), null, true);
                     }
                 }
             }
@@ -388,7 +393,7 @@ static public class DiffUtils
             {
                 if (sprite.Textures[i]?.Texture is not null)
                 {
-                    worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(dirModifiedSprite.FullName , sprite.Name.Content + "_" + i + ".png"), null, true);
+                    worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(NewFrames.FullName , sprite.Name.Content + "_" + i + ".png"), null, true);
                 }
             }
         }
