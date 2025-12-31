@@ -803,17 +803,17 @@
         </member>
         <member name="T:UndertaleModLib.Models.UndertaleAnimationCurve.GraphTypeEnum">
             <summary>
-            TODO: unknown
+            Unused enum: The curve type is set per channel unlike in GMS2 where it is set per animation curve
             </summary>
         </member>
-        <member name="F:UndertaleModLib.Models.UndertaleAnimationCurve.GraphTypeEnum.Unknown0">
+        <member name="F:UndertaleModLib.Models.UndertaleAnimationCurve.GraphTypeEnum.Bezier">
             <summary>
-            Unknown
+            Value is never set by the compiler
             </summary>
         </member>
-        <member name="F:UndertaleModLib.Models.UndertaleAnimationCurve.GraphTypeEnum.Unknown1">
+        <member name="F:UndertaleModLib.Models.UndertaleAnimationCurve.GraphTypeEnum.Graph">
             <summary>
-            Unknown
+            Value is always set by the compiler
             </summary>
         </member>
         <member name="P:UndertaleModLib.Models.UndertaleAnimationCurve.Name">
@@ -885,6 +885,11 @@
             Creates a smooth progression between points using catmull-rom interpolation.
             </summary>
         </member>
+        <member name="F:UndertaleModLib.Models.UndertaleAnimationCurve.Channel.CurveType.Bezier">
+            <summary>
+            Creates a curved progression by using points as the control points of a 2D Bézier curve.
+            </summary>
+        </member>
         <member name="P:UndertaleModLib.Models.UndertaleAnimationCurve.Channel.Name">
             <inheritdoc />
         </member>
@@ -895,7 +900,7 @@
         </member>
         <member name="P:UndertaleModLib.Models.UndertaleAnimationCurve.Channel.Iterations">
             <summary>
-            TODO: document this
+            The amount of resolution generated between control points in both Catmull-Rom (smooth) and Bezier interpolation.
             </summary>
         </member>
         <member name="P:UndertaleModLib.Models.UndertaleAnimationCurve.Channel.Points">
@@ -3938,7 +3943,12 @@
         </member>
         <member name="F:UndertaleModLib.Models.UndertaleGeneralInfo.InfoFlags.SteamEnabled">
             <summary>
-            Whether Steam is enabled.
+            Whether Steam (or the YoYoPlayer) is enabled.
+            </summary>
+        </member>
+        <member name="F:UndertaleModLib.Models.UndertaleGeneralInfo.InfoFlags.UseAppDataSaveLocation">
+            <summary>
+            When enabled, the game will write save data to %appdata%\GameName, otherwise it will write to %localappdata%\GameName
             </summary>
         </member>
         <member name="F:UndertaleModLib.Models.UndertaleGeneralInfo.InfoFlags.BorderlessWindow">
@@ -3949,6 +3959,11 @@
         <member name="F:UndertaleModLib.Models.UndertaleGeneralInfo.InfoFlags.JavaScriptMode">
             <summary>
             Tells the runner to run Javascript code
+            </summary>
+        </member>
+        <member name="F:UndertaleModLib.Models.UndertaleGeneralInfo.InfoFlags.GameRunFromGMS2IDE">
+            <summary>
+            This flag is set when a game is launched from the Gamemaker Studio 2 IDE using the 'Run' or 'Debug' options
             </summary>
         </member>
         <member name="T:UndertaleModLib.Models.UndertaleGeneralInfo.FunctionClassification">
@@ -3966,9 +3981,9 @@
             The bytecode version of the data file.
             </summary>
         </member>
-        <member name="P:UndertaleModLib.Models.UndertaleGeneralInfo.Unknown">
+        <member name="P:UndertaleModLib.Models.UndertaleGeneralInfo.Padding">
             <summary>
-            TODO: currently unknown value.
+            Likely padding, IsDebuggerDisabled and BytecodeVersion are written together as a 32-bit integer
             </summary>
         </member>
         <member name="P:UndertaleModLib.Models.UndertaleGeneralInfo.FileName">
@@ -4189,14 +4204,14 @@
             If the resolution can be changed.
             </summary>
         </member>
-        <member name="P:UndertaleModLib.Models.UndertaleOptions.Unknown1">
+        <member name="P:UndertaleModLib.Models.UndertaleOptions.ShaderExtensionFlag">
             <summary>
-            TODO: unknown value, needs research. Tends to be 2^31?
+            Shader extension flag. Always set to int.MinValue
             </summary>
         </member>
-        <member name="P:UndertaleModLib.Models.UndertaleOptions.Unknown2">
+        <member name="P:UndertaleModLib.Models.UndertaleOptions.ShaderExtensionVersion">
             <summary>
-            TODO: another unknown value, also needs research.
+            Shader extension version. Always set to 2
             </summary>
         </member>
         <member name="P:UndertaleModLib.Models.UndertaleOptions.Info">
@@ -4470,9 +4485,9 @@
             Whether the room has Views enabled.
             </summary>
         </member>
-        <member name="F:UndertaleModLib.Models.UndertaleRoom.RoomEntryFlags.ShowColor">
+        <member name="F:UndertaleModLib.Models.UndertaleRoom.RoomEntryFlags.ClearViewBackground">
             <summary>
-            TODO not exactly sure, probably similar to <see cref="P:UndertaleModLib.Models.UndertaleRoom.DrawBackgroundColor"/>?
+            Clears the application surface with the window colour before drawing each frame.
             </summary>
         </member>
         <member name="F:UndertaleModLib.Models.UndertaleRoom.RoomEntryFlags.DoNotClearDisplayBuffer">
@@ -9143,6 +9158,11 @@
             BZip2 compression applied on top of GameMaker's custom variant of the QOI image file format.
             </summary>
         </member>
+        <member name="F:UndertaleModLib.Util.GMImage.ImageFormat.Dds">
+            <summary>
+            DDS file format.
+            </summary>
+        </member>
         <member name="P:UndertaleModLib.Util.GMImage.Format">
             <summary>
             Format of this image.
@@ -9181,6 +9201,11 @@
         <member name="P:UndertaleModLib.Util.GMImage.MagicBz2Footer">
             <summary>
             Magic value found near the end of a BZip2 stream (square root of pi). 
+            </summary>
+        </member>
+        <member name="P:UndertaleModLib.Util.GMImage.MagicDds">
+            <summary>
+            DDS file format magic.
             </summary>
         </member>
         <member name="F:UndertaleModLib.Util.GMImage._data">
@@ -9255,6 +9280,12 @@
             </summary>
             <exception cref="T:System.IO.InvalidDataException">Invalid QOI data, or image is too large</exception>
         </member>
+        <member name="M:UndertaleModLib.Util.GMImage.FromDds(System.Byte[])">
+            <summary>
+            Creates a <see cref="T:UndertaleModLib.Util.GMImage"/> of DDS format, wrapping around the provided byte array containing DDS data.
+            </summary>
+            <param name="data">Byte array of DDS data.</param>
+        </member>
         <member name="M:UndertaleModLib.Util.GMImage.SavePng(System.IO.Stream)">
             <summary>
             Saves this image as a PNG file, writing the data to the provided <see cref="T:System.IO.Stream"/>.
@@ -9293,6 +9324,13 @@
             Returns the same or a new <see cref="T:UndertaleModLib.Util.GMImage"/>; the result of converting this image to <see cref="F:UndertaleModLib.Util.GMImage.ImageFormat.Bz2Qoi"/> format.
             </summary>
             <param name="sharedStream">Shared <see cref="T:System.IO.MemoryStream"/> to be reused for BZ2 compression, if required.</param>
+        </member>
+        <member name="M:UndertaleModLib.Util.GMImage.ConvertToDds">
+            <summary>
+            Same as <see cref="M:UndertaleModLib.Util.GMImage.ConvertToPng"/>.
+            </summary>
+            <remarks>This is supposed to return the image converted to <see cref="F:UndertaleModLib.Util.GMImage.ImageFormat.Dds"/> format, but that's not implemented yet.</remarks>
+            <returns></returns>
         </member>
         <member name="M:UndertaleModLib.Util.GMImage.GetRawImageData">
             <summary>
