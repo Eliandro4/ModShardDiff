@@ -226,8 +226,8 @@ static public class DiffUtils
 
             string report = dmp.diff_prettyHtml(diff);
             File.WriteAllText(Path.Join(dirModifiedCode.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.html"), report);
-            File.WriteAllText(Path.Join(dirOldGML.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.gml"), strName);
-            File.WriteAllText(Path.Join(dirNewGML.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.gml"), strRef);
+            File.WriteAllText(Path.Join(dirNewGML.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.gml"), strName);
+            File.WriteAllText(Path.Join(dirOldGML.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.gml"), strRef);
         }
     }
     public static void DiffCodes(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder)

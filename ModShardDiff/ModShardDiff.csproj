@@ -24,17 +24,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="UndertaleModLib">
-      <HintPath>lib\UndertaleModLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Underanalyzer">
-      <HintPath>lib\Underanalyzer.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="lib/GameSpecificData/**/*" Link="GameSpecificData\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"  />
-    <None Update="runtimeconfig.json">
+    <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj" />
+    <ProjectReference Include="..\UndertaleModTool\Underanalyzer\Underanalyzer\Underanalyzer.csproj" />
+    <None Include="runtimeconfig.json">
+      <Link>runtimeconfig.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\LICENSE">
+      <Link>LICENSE</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
