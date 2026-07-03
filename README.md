@@ -1,4 +1,5 @@
-# ModShardDiff
+# Eliandro's ModShardDiff Fork
+A modifed version of ModShardDiff made for the personal use of mine
 
 A cli tool to export differences between two .win files from the same GameMaker-based game. 
 

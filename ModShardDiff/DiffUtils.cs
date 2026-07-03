@@ -6,6 +6,7 @@ using UndertaleModLib.Util;
 using Polenter.Serialization;
 using Newtonsoft.Json;
 using ImageMagick;
+using System.Collections.Concurrent;
 
 namespace ModShardDiff;
 
@@ -363,40 +364,44 @@ static public class DiffUtils
     }
     private static void ModifiedSprites(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder, TextureWorker worker)
     {
-        DirectoryInfo dirModifiedSprite = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "ModifiedSprites"));
-        DirectoryInfo NewFrames = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "AddedFrames"));
-        DirectoryInfo OriginalFrames = new(Path.Join(dirModifiedSprite.FullName, Path.DirectorySeparatorChar.ToString(), "OriginalSprites"));
-        dirModifiedSprite.Create();
-        NewFrames.Create();
-        OriginalFrames.Create();
+        DirectoryInfo dirModifiedSprite = Directory.CreateDirectory(Path.Combine(outputFolder.FullName, "ModifiedSprites"));
+        DirectoryInfo originalFrames = Directory.CreateDirectory(Path.Combine(dirModifiedSprite.FullName, "OriginalSprites"));
+        DirectoryInfo newFrames = Directory.CreateDirectory(Path.Combine(outputFolder.FullName, "AddedFrames"));
 
-        IEnumerable<UndertaleSprite> common = name.Sprites.Intersect(reference.Sprites, new UndertaleSpriteNameComparer());
-        int minCount = 0;
-        foreach(UndertaleSprite sprite in common)
+        var common = name.Sprites.Intersect(reference.Sprites, new UndertaleSpriteNameComparer()).ToList();
+        var hashCache = new ConcurrentDictionary<UndertaleTexturePageItem, uint>();
+
+        Parallel.ForEach(common, sprite =>
         {
             UndertaleSprite spriteRef = reference.Sprites.First(t => t.Name.Content == sprite.Name.Content);
-            minCount = sprite.Textures.Count < spriteRef.Textures.Count ? sprite.Textures.Count : spriteRef.Textures.Count;
+            int minCount = Math.Min(sprite.Textures.Count, spriteRef.Textures.Count);
 
             for (int i = 0; i < minCount; i++)
             {
-                if (sprite.Textures[i]?.Texture is not null)
+                var item1 = sprite.Textures[i]?.Texture;
+                var item2 = spriteRef.Textures[i]?.Texture;
+
+                if (item1 == null || item2 == null) continue;
+                if (GetTextureItemHash(item1, worker, hashCache) != GetTextureItemHash(item2, worker, hashCache))
                 {
-                    if (UnsafeCompare(worker.GetTextureFor(sprite.Textures[i].Texture, sprite.Textures[i].Texture.Name.Content).ToByteArray(), (worker.GetTextureFor(spriteRef.Textures[i].Texture, spriteRef.Textures[i].Texture.Name.Content)).ToByteArray())) continue;
-                    {
-                        worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(dirModifiedSprite.FullName, sprite.Name.Content + "_" + i + ".png"), null, true);
-                        worker.ExportAsPNG(spriteRef.Textures[i].Texture, Path.Combine(OriginalFrames.FullName, sprite.Name.Content + "_" + i + ".png"), null, true);
-                    }
+                    worker.ExportAsPNG(item1, Path.Combine(dirModifiedSprite.FullName, $"{sprite.Name.Content}_{i}.png"), null, true);
+                    worker.ExportAsPNG(item2, Path.Combine(originalFrames.FullName, $"{sprite.Name.Content}_{i}.png"), null, true);
                 }
             }
-
             for (int i = minCount; i < sprite.Textures.Count; i++)
             {
-                if (sprite.Textures[i]?.Texture is not null)
-                {
-                    worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(NewFrames.FullName , sprite.Name.Content + "_" + i + ".png"), null, true);
-                }
+                if (sprite.Textures[i]?.Texture != null)
+                    worker.ExportAsPNG(sprite.Textures[i].Texture, Path.Combine(newFrames.FullName, $"{sprite.Name.Content}_{i}.png"), null, true);
             }
-        }
+        });
+    }
+    private static uint GetTextureItemHash(UndertaleTexturePageItem item, TextureWorker worker, ConcurrentDictionary<UndertaleTexturePageItem, uint> cache)
+    {
+        return cache.GetOrAdd(item, t => {
+            using var image = worker.GetTextureFor(t, t.Name.Content);
+            byte[] rawData = image.ToByteArray(MagickFormat.Bgra);
+            return MurmurHash.Hash(rawData);
+        });
     }
     public static void DiffSprites(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder)
     {
