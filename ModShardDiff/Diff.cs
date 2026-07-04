@@ -62,12 +62,30 @@ internal static class FileReader
 
         if (taskName.Result == null || taskRef.Result == null) throw new FormatException($"Cannot load {name} and {outputFolder}.");
 
+        void FinishedDiff(Stopwatch watch, string part)
+        {
+            watch.Stop();
+            TimeSpan ts = watch.Elapsed;
+            var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
+            Console.WriteLine($"Sucessfully compared all the {part} in {elapsedTime}");
+            watch.Reset();
+            watch.Start();
+        }
+
+        Stopwatch watch = new();
+        watch.Start();
         DiffUtils.DiffCodes(taskName.Result, taskRef.Result, dir);
+        FinishedDiff(watch, "Codes");
         DiffUtils.DiffObjects(taskName.Result, taskRef.Result, dir);
+        FinishedDiff(watch, "Objects");
         DiffUtils.DiffRooms(taskName.Result, taskRef.Result, dir);
+        FinishedDiff(watch, "Rooms");
         DiffUtils.DiffSounds(taskName.Result, taskRef.Result, dir);
+        FinishedDiff(watch, "Sounds");
         DiffUtils.DiffSprites(taskName.Result, taskRef.Result, dir);
+        FinishedDiff(watch, "Sprites");
         DiffUtils.DiffTexturePageItems(taskName.Result, taskRef.Result, dir);
+        FinishedDiff(watch, "TexturePageItems");
         return true;
     }
     private static UndertaleData? LoadUmt(string filename)
