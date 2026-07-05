@@ -132,6 +132,9 @@ static public class DiffUtils
     }
     private static bool CompareUndertaleCode(MemoryStream ms, SharpSerializer burstSerializer, UndertaleCode code, UndertaleCode codeRef)
     {
+        if (code.Length != codeRef.Length || code.LocalsCount != codeRef.LocalsCount || code.ArgumentsCount != codeRef.ArgumentsCount)
+            return false;
+
         ms.SetLength(0);
         burstSerializer.Serialize(code, ms);
         byte[] bytes = ms.ToArray();
@@ -177,13 +180,11 @@ static public class DiffUtils
     }
     private static void ModifiedCodes(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder)
     {
-        using MemoryStream ms = new();
-        SharpSerializer burstSerializer = new(new SharpSerializerBinarySettings(BinarySerializationMode.Burst));
-
         GlobalDecompileContext contextName = new(name);
         GlobalDecompileContext contextRef = new(reference);
         Underanalyzer.Decompiler.IDecompileSettings decompilerSettingsName = name.ToolInfo.DecompilerSettings;
         Underanalyzer.Decompiler.IDecompileSettings decompilerSettingsRef = reference.ToolInfo.DecompilerSettings;
+        
         DirectoryInfo dirModifiedCode = new(Path.Join(outputFolder.FullName, Path.DirectorySeparatorChar.ToString(), "ModifiedCodes"));
         DirectoryInfo dirOldGML = new(Path.Join(dirModifiedCode.FullName, Path.DirectorySeparatorChar.ToString(), "OLD_GML"));
         DirectoryInfo dirNewGML = new(Path.Join(dirModifiedCode.FullName, Path.DirectorySeparatorChar.ToString(), "NEW_GML"));
@@ -191,45 +192,68 @@ static public class DiffUtils
         dirNewGML.Create();
         dirModifiedCode.Create();
 
-        string strName = "";
-        string strRef = "";
-        UndertaleCode codeRef;
+        var refCodeDict = reference.Code.Where(c => c.ParentEntry is null)
+                                        .GroupBy(c => c.Name.Content)
+                                        .ToDictionary(g => g.Key, g => g.First());
 
-        IEnumerable<UndertaleCode> common = name.Code.Where(c => c.ParentEntry is null).ToList().Intersect(reference.Code.Where(c => c.ParentEntry is null).ToList(), new UndertaleCodeNameComparer());
-        diff_match_patch dmp = new();
+        var codesToProcess = name.Code.Where(c => c.ParentEntry is null && refCodeDict.ContainsKey(c.Name.Content)).ToList();
 
-        foreach(UndertaleCode code in common)
-        {
-            codeRef = reference.Code.First(t => t.Name.Content == code.Name.Content);
-            if (CompareUndertaleCode(ms, burstSerializer, code, codeRef)) continue;
-            try
+        Parallel.ForEach(
+            codesToProcess,
+            () => new 
             {
-                strName = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextName, code, decompilerSettingsName).DecompileToString() : "");
-                strRef = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextRef, codeRef, decompilerSettingsRef).DecompileToString() : "");
-            }
-            catch(Exception ex)
+                ms = new MemoryStream(),
+                serializer = new SharpSerializer(new SharpSerializerBinarySettings(BinarySerializationMode.Burst)),
+                dmp = new diff_match_patch()
+            },
+            (code, state, localState) =>
             {
-                if (!ex.Message.Contains("This code block represents a function nested inside"))
+                UndertaleCode codeRef = refCodeDict[code.Name.Content];
+                
+                if (CompareUndertaleCode(localState.ms, localState.serializer, code, codeRef)) 
+                    return localState;
+
+                string strName = "";
+                string strRef = "";
+                
+                try
                 {
-                    try
+                    strName = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextName, code, decompilerSettingsName).DecompileToString() : "");
+                    strRef = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextRef, codeRef, decompilerSettingsRef).DecompileToString() : "");
+                }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.Contains("This code block represents a function nested inside"))
                     {
-                        strName = code.Disassemble(name.Variables, name.CodeLocals.For(code));
-                        strRef = codeRef.Disassemble(reference.Variables, reference.CodeLocals.For(codeRef));
-                    }
-                    catch (Exception ex2)
-                    {
-                        Console.WriteLine($"{ex2.GetType()}: {ex2.Message}");
+                        try
+                        {
+                            strName = code.Disassemble(name.Variables, name.CodeLocals.For(code));
+                            strRef = codeRef.Disassemble(reference.Variables, reference.CodeLocals.For(codeRef));
+                        }
+                        catch (Exception ex2)
+                        {
+                            Console.WriteLine($"{ex2.GetType()}: {ex2.Message}");
+                        }
                     }
                 }
-            }
-            List<Diff> diff = dmp.diff_main(strRef, strName);
-            if (diff.Count == 0 || (diff.Count == 1 && diff[0].operation == Operation.EQUAL)) continue;
 
-            string report = dmp.diff_prettyHtml(diff);
-            File.WriteAllText(Path.Join(dirModifiedCode.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.html"), report);
-            File.WriteAllText(Path.Join(dirNewGML.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.gml"), strName);
-            File.WriteAllText(Path.Join(dirOldGML.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.gml"), strRef);
-        }
+                List<Diff> diff = localState.dmp.diff_main(strRef, strName);
+                if (diff.Count == 0 || (diff.Count == 1 && diff[0].operation == Operation.EQUAL)) 
+                    return localState;
+
+                string report = localState.dmp.diff_prettyHtml(diff);
+                
+                File.WriteAllText(Path.Join(dirModifiedCode.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.html"), report);
+                File.WriteAllText(Path.Join(dirNewGML.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.gml"), strName);
+                File.WriteAllText(Path.Join(dirOldGML.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.gml"), strRef);
+
+                return localState;
+            },
+            (localState) => 
+            {
+                localState.ms.Dispose();
+            }
+        );
     }
     public static void DiffCodes(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder)
     {
