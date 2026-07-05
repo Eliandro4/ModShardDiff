@@ -368,12 +368,11 @@ static public class DiffUtils
         DirectoryInfo originalFrames = Directory.CreateDirectory(Path.Combine(dirModifiedSprite.FullName, "OriginalSprites"));
         DirectoryInfo newFrames = Directory.CreateDirectory(Path.Combine(outputFolder.FullName, "AddedFrames"));
 
-        var common = name.Sprites.Intersect(reference.Sprites, new UndertaleSpriteNameComparer()).ToList();
-        var hashCache = new ConcurrentDictionary<UndertaleTexturePageItem, uint>();
+        var refSpritesDict = reference.Sprites.ToDictionary(s => s.Name.Content);
 
-        Parallel.ForEach(common, sprite =>
+        Parallel.ForEach(name.Sprites.Where(s => refSpritesDict.ContainsKey(s.Name.Content)), sprite =>
         {
-            UndertaleSprite spriteRef = reference.Sprites.First(t => t.Name.Content == sprite.Name.Content);
+            UndertaleSprite spriteRef = refSpritesDict[sprite.Name.Content];
             int minCount = Math.Min(sprite.Textures.Count, spriteRef.Textures.Count);
 
             for (int i = 0; i < minCount; i++)
@@ -382,7 +381,14 @@ static public class DiffUtils
                 var item2 = spriteRef.Textures[i]?.Texture;
 
                 if (item1 == null || item2 == null) continue;
-                if (GetTextureItemHash(item1, worker, hashCache) != GetTextureItemHash(item2, worker, hashCache))
+                
+                bool isDifferent = (item1.SourceWidth != item2.SourceWidth || item1.SourceHeight != item2.SourceHeight);
+                if (!isDifferent)
+                {
+                    isDifferent = GetTextureItemHash(item1, worker) != GetTextureItemHash(item2, worker);
+                }
+
+                if (isDifferent)
                 {
                     worker.ExportAsPNG(item1, Path.Combine(dirModifiedSprite.FullName, $"{sprite.Name.Content}_{i}.png"), null, true);
                     worker.ExportAsPNG(item2, Path.Combine(originalFrames.FullName, $"{sprite.Name.Content}_{i}.png"), null, true);
@@ -395,13 +401,11 @@ static public class DiffUtils
             }
         });
     }
-    private static uint GetTextureItemHash(UndertaleTexturePageItem item, TextureWorker worker, ConcurrentDictionary<UndertaleTexturePageItem, uint> cache)
+    private static uint GetTextureItemHash(UndertaleTexturePageItem item, TextureWorker worker)
     {
-        return cache.GetOrAdd(item, t => {
-            using var image = worker.GetTextureFor(t, t.Name.Content);
-            byte[] rawData = image.ToByteArray(MagickFormat.Bgra);
-            return MurmurHash.Hash(rawData);
-        });
+        using var image = worker.GetTextureFor(item, item.Name.Content);
+        byte[] rawData = image.ToByteArray(MagickFormat.Bgra);
+        return MurmurHash.Hash(rawData);
     }
     public static void DiffSprites(UndertaleData name, UndertaleData reference, DirectoryInfo outputFolder)
     {
