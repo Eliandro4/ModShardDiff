@@ -167,7 +167,7 @@ static public class DiffUtils
                 string strCode = "";
                 try
                 {
-                    strCode = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextName, code, decompilerSettings).DecompileToString() : "");
+                    strCode = new Underanalyzer.Decompiler.DecompileContext(contextName, code, decompilerSettings).DecompileToString();
                     File.WriteAllText(Path.Join(dirAddedCode.FullName, Path.DirectorySeparatorChar.ToString(), $"{code.Name.Content}.gml"), strCode);
                 }
                 catch
@@ -218,8 +218,8 @@ static public class DiffUtils
                 
                 try
                 {
-                    strName = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextName, code, decompilerSettingsName).DecompileToString() : "");
-                    strRef = (code != null ? new Underanalyzer.Decompiler.DecompileContext(contextRef, codeRef, decompilerSettingsRef).DecompileToString() : "");
+                    strName = new Underanalyzer.Decompiler.DecompileContext(contextName, code, decompilerSettingsName).DecompileToString();
+                    strRef = new Underanalyzer.Decompiler.DecompileContext(contextRef, codeRef, decompilerSettingsRef).DecompileToString();
                 }
                 catch (Exception ex)
                 {
